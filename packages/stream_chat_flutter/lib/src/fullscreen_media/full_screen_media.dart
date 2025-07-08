@@ -22,6 +22,7 @@ class StreamFullScreenMedia extends FullScreenMediaWidget {
     this.onReplyMessage,
     this.attachmentActionsModalBuilder,
     this.autoplayVideos = false,
+    this.attachmentFileSupport,
   }) : assert(startIndex >= 0, 'startIndex cannot be negative');
 
   /// The url of the image
@@ -38,6 +39,9 @@ class StreamFullScreenMedia extends FullScreenMediaWidget {
 
   /// Callback for when reply message is tapped
   final ReplyMessageCallback? onReplyMessage;
+
+  /// Support utility for custom cdn attachment retrieval
+  final AttachmentFileSupport? attachmentFileSupport;
 
   /// Widget builder for attachment actions modal
   /// [defaultActionsModal] is the default [AttachmentActionsModal] config
@@ -70,7 +74,11 @@ class _FullScreenMediaState extends State<StreamFullScreenMedia> {
     for (var i = 0; i < widget.mediaAttachmentPackages.length; i++) {
       final attachment = widget.mediaAttachmentPackages[i].attachment;
       if (attachment.type != AttachmentType.video) continue;
-      final package = VideoPackage(attachment, showControls: true);
+      final package = VideoPackage(
+        attachment,
+        showControls: true,
+        attachmentFileSupport: widget.attachmentFileSupport,
+      );
       videoPackages[attachment.id] = package;
     }
     initializePlayers();
@@ -348,6 +356,7 @@ class VideoPackage {
     this._attachment, {
     bool showControls = false,
     bool autoInitialize = true,
+    AttachmentFileSupport? attachmentFileSupport,
   })  : _showControls = showControls,
         _autoInitialize = autoInitialize,
         _videoPlayerController = _attachment.localUri != null
@@ -356,6 +365,7 @@ class VideoPackage {
               )
             : VideoPlayerController.networkUrl(
                 Uri.parse(_attachment.assetUrl!),
+                httpHeaders: attachmentFileSupport?.headers ?? {},
               );
 
   final Attachment _attachment;

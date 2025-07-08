@@ -20,6 +20,7 @@ class StreamVoiceRecordingAttachmentPlaylist extends StatefulWidget {
     this.itemBuilder,
     this.separatorBuilder = _defaultVoiceRecordingPlaylistSeparatorBuilder,
     this.constraints = const BoxConstraints(),
+    this.attachmentFileSupport,
   });
 
   /// The shape of the attachment.
@@ -48,6 +49,9 @@ class StreamVoiceRecordingAttachmentPlaylist extends StatefulWidget {
   /// The separator to use between the voice recordings.
   final IndexedWidgetBuilder separatorBuilder;
 
+  /// The attachment file support to use for the downloading voice recordings.
+  final AttachmentFileSupport? attachmentFileSupport;
+
   // Default separator builder for the voice recording playlist.
   static Widget _defaultVoiceRecordingPlaylistSeparatorBuilder(
     BuildContext context,
@@ -65,6 +69,7 @@ class _StreamVoiceRecordingAttachmentPlaylistState
     extends State<StreamVoiceRecordingAttachmentPlaylist> {
   late final _controller = StreamAudioPlaylistController(
     widget.voiceRecordings.toPlaylist(),
+    attachmentFileSupport: widget.attachmentFileSupport,
   );
 
   @override

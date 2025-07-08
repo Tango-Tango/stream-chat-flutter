@@ -140,6 +140,11 @@ class AttachmentActionsModal extends StatelessWidget {
                         color: theme.colorTheme.textLowEmphasis,
                       ),
                       () {
+                        final client = StreamChat.of(context).client;
+                        final options = Options(
+                          headers: client.attachmentFileSupport?.headers,
+                        );
+
                         // Closing attachment actions modal before opening
                         // attachment download dialog
                         Navigator.of(context).pop();
@@ -150,7 +155,7 @@ class AttachmentActionsModal extends StatelessWidget {
                         // No need to show progress dialog in case of
                         // web or desktop.
                         if (isDesktopDeviceOrWeb) {
-                          downloader(attachment);
+                          downloader(attachment, options: options);
                           return;
                         }
 
@@ -164,6 +169,7 @@ class AttachmentActionsModal extends StatelessWidget {
 
                         downloader(
                           attachment,
+                          options: options,
                           onReceiveProgress: (received, total) {
                             progressNotifier.value = _DownloadProgress(
                               total,

@@ -4,15 +4,20 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:stream_chat_flutter/src/audio/audio_playlist_state.dart';
+import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
 
 /// {@template streamAudioPlaylistController}
 /// A controller for managing an audio playlist.
 /// {@endtemplate}
 class StreamAudioPlaylistController extends ValueNotifier<AudioPlaylistState> {
   /// {@macro streamAudioPlaylistController}
-  factory StreamAudioPlaylistController(List<PlaylistTrack> tracks) {
+  factory StreamAudioPlaylistController(
+    List<PlaylistTrack> tracks, {
+    AttachmentFileSupport? attachmentFileSupport,
+  }) {
     return StreamAudioPlaylistController.raw(
       state: AudioPlaylistState(tracks: tracks),
+      attachmentFileSupport: attachmentFileSupport,
     );
   }
 
@@ -21,10 +26,13 @@ class StreamAudioPlaylistController extends ValueNotifier<AudioPlaylistState> {
   StreamAudioPlaylistController.raw({
     AudioPlayer? player,
     AudioPlaylistState state = const AudioPlaylistState(tracks: []),
+    AttachmentFileSupport? attachmentFileSupport,
   })  : _player = player ?? AudioPlayer(),
+        _attachmentFileSupport = attachmentFileSupport,
         super(state);
 
   final AudioPlayer _player;
+  final AttachmentFileSupport? _attachmentFileSupport;
 
   StreamSubscription<PlayerState>? _playerStateSubscription;
   StreamSubscription<Duration>? _positionSubscription;
@@ -153,7 +161,10 @@ class StreamAudioPlaylistController extends ValueNotifier<AudioPlaylistState> {
 
     final track = tracks[index];
     final seekPosition = position ?? track.position;
-    final audioSource = AudioSource.uri(track.uri);
+    final audioSource = AudioSource.uri(
+      track.uri,
+      headers: _attachmentFileSupport?.headers,
+    );
 
     final duration = await _player.setAudioSource(
       audioSource,

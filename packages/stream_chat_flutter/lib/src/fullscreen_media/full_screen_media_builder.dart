@@ -73,6 +73,8 @@ class StreamFullScreenMediaBuilder extends StatelessWidget {
       );
     }
 
+    final client = StreamChat.of(context).client;
+
     return StreamFullScreenMedia(
       mediaAttachmentPackages: mediaAttachmentPackages,
       startIndex: startIndex,
@@ -81,6 +83,7 @@ class StreamFullScreenMediaBuilder extends StatelessWidget {
       onReplyMessage: onReplyMessage,
       attachmentActionsModalBuilder: attachmentActionsModalBuilder,
       autoplayVideos: autoplayVideos,
+      attachmentFileSupport: client.attachmentFileSupport,
     );
   }
 }

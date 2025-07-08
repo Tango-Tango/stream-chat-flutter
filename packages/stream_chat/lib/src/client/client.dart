@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:stream_chat/src/client/channel.dart';
 import 'package:stream_chat/src/client/retry_policy.dart';
+import 'package:stream_chat/src/core/api/attachment_file_support.dart';
 import 'package:stream_chat/src/core/api/attachment_file_uploader.dart';
 import 'package:stream_chat/src/core/api/requests.dart';
 import 'package:stream_chat/src/core/api/responses.dart';
@@ -80,6 +81,7 @@ class StreamChatClient {
     Duration receiveTimeout = const Duration(seconds: 6),
     StreamChatApi? chatApi,
     WebSocket? ws,
+    AttachmentFileSupport? attachmentFileSupport,
     AttachmentFileUploaderProvider attachmentFileUploaderProvider =
         StreamAttachmentFileUploader.new,
     Iterable<Interceptor>? chatApiInterceptors,
@@ -116,6 +118,8 @@ class StreamChatClient {
           logger: detachedLogger('🔌'),
         );
 
+    _attachmentFileSupport = attachmentFileSupport;
+
     _retryPolicy = retryPolicy ??
         RetryPolicy(
           shouldRetry: (_, __, error) {
@@ -128,6 +132,7 @@ class StreamChatClient {
 
   late final StreamChatApi _chatApi;
   late final WebSocket _ws;
+  late final AttachmentFileSupport? _attachmentFileSupport;
 
   /// This client state
   late ClientState state;
@@ -268,6 +273,10 @@ class StreamChatClient {
   Logger detachedLogger(String name) => Logger.detached(name)
     ..level = logLevel
     ..onRecord.listen(logHandlerFunction);
+
+  /// Instance of [AttachmentFileSupport] used to support accessing attachments
+  /// uploaded to a custom CDN via a custom [AttachmentFileUploader].
+  AttachmentFileSupport? get attachmentFileSupport => _attachmentFileSupport;
 
   /// Connects the current user, this triggers a connection to the API.
   /// It returns a [Future] that resolves when the connection is setup.

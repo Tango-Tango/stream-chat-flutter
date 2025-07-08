@@ -48,6 +48,7 @@ class VoiceRecordingAttachmentPlaylistBuilder
   ) {
     assert(debugAssertCanHandle(message, attachments), '');
 
+    final client = StreamChat.of(context).client;
     final playlist = attachments[AttachmentType.voiceRecording]!;
 
     return Padding(
@@ -58,6 +59,7 @@ class VoiceRecordingAttachmentPlaylistBuilder
         voiceRecordings: playlist,
         constraints: constraints,
         separatorBuilder: (_, __) => SizedBox(height: padding.vertical / 2),
+        attachmentFileSupport: client.attachmentFileSupport,
       ),
     );
   }
