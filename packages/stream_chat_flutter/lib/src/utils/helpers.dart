@@ -24,11 +24,18 @@ Future<T> runInPermissionRequestLock<T>(
 }
 
 /// Launch URL
-Future<void> launchURL(BuildContext context, String url) async {
+Future<void> launchURL(
+  BuildContext context,
+  String url, {
+  Map<String, String>? headers,
+}) async {
   try {
     await launchUrl(
       Uri.parse(url).withScheme,
       mode: LaunchMode.externalApplication,
+      webViewConfiguration: WebViewConfiguration(
+        headers: headers ?? {},
+      ),
     );
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(

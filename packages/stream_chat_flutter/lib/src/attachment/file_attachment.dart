@@ -3,6 +3,7 @@ import 'package:stream_chat_flutter/src/attachment/handler/stream_attachment_han
 import 'package:stream_chat_flutter/src/attachment/thumbnail/file_attachment_thumbnail.dart';
 import 'package:stream_chat_flutter/src/icons/stream_svg_icon.dart';
 import 'package:stream_chat_flutter/src/indicators/upload_progress_indicator.dart';
+import 'package:stream_chat_flutter/src/stream_chat.dart';
 import 'package:stream_chat_flutter/src/theme/stream_chat_theme.dart';
 import 'package:stream_chat_flutter/src/utils/utils.dart';
 import 'package:stream_chat_flutter_core/stream_chat_flutter_core.dart';
@@ -165,6 +166,7 @@ class _Trailing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final client = StreamChat.of(context).client;
     final theme = StreamChatTheme.of(context);
     final channel = StreamChannel.of(context).channel;
     final attachmentId = attachment.id;
@@ -181,7 +183,11 @@ class _Trailing extends StatelessWidget {
           final assetUrl = attachment.assetUrl;
           if (assetUrl != null) {
             if (isMobileDeviceOrWeb) {
-              launchURL(context, assetUrl);
+              launchURL(
+                context,
+                assetUrl,
+                headers: client.attachmentFileSupport?.headers,
+              );
             } else {
               StreamAttachmentHandler.instance.downloadAttachment(attachment);
             }
