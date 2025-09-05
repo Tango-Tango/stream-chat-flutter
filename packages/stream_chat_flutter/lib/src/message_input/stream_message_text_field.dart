@@ -16,6 +16,13 @@ export 'package:flutter/services.dart'
         SmartQuotesType,
         SmartDashesType;
 
+/// Signature for the function that determines the context menu widget for the
+/// base [TextField].
+typedef ContextMenuBuilder = Widget Function(
+  BuildContext context,
+  EditableTextState editableTextState,
+);
+
 /// A widget the wraps the [TextField] and adds some StreamChat specifics.
 class StreamMessageTextField extends StatefulWidget {
   /// Creates a Material Design text field.
@@ -119,6 +126,7 @@ class StreamMessageTextField extends StatefulWidget {
     this.scribbleEnabled = true,
     this.enableIMEPersonalizedLearning = true,
     this.contentInsertionConfiguration,
+    this.contextMenuBuilder,
   })  : assert(obscuringCharacter.length == 1, ''),
         smartDashesType = smartDashesType ??
             (obscureText ? SmartDashesType.disabled : SmartDashesType.enabled),
@@ -515,6 +523,9 @@ class StreamMessageTextField extends StatefulWidget {
   /// {@macro flutter.widgets.editableText.contentInsertionConfiguration}
   final ContentInsertionConfiguration? contentInsertionConfiguration;
 
+  /// {@macro flutter.widgets.editableText.contextMenuBuilder}
+  final ContextMenuBuilder? contextMenuBuilder;
+
   @override
   _StreamMessageTextFieldState createState() => _StreamMessageTextFieldState();
 
@@ -709,6 +720,7 @@ class _StreamMessageTextFieldState extends State<StreamMessageTextField>
         scribbleEnabled: widget.scribbleEnabled,
         enableIMEPersonalizedLearning: widget.enableIMEPersonalizedLearning,
         contentInsertionConfiguration: widget.contentInsertionConfiguration,
+        contextMenuBuilder: widget.contextMenuBuilder,
       );
 
   @override

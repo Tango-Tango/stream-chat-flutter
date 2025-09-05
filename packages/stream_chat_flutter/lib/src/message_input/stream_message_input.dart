@@ -167,6 +167,7 @@ class StreamMessageInput extends StatefulWidget {
     this.pollConfig,
     this.padding = const EdgeInsets.all(8),
     this.textInputMargin,
+    this.contextMenuBuilder,
   })  : assert(
           idleSendIcon == null || idleSendButton == null,
           'idleSendIcon and idleSendButton cannot be used together',
@@ -437,6 +438,9 @@ class StreamMessageInput extends StatefulWidget {
   /// Defaults to null, and margin is applied based on action and send button
   /// locations.
   final EdgeInsets? textInputMargin;
+
+  /// Context menu builder for the base [TextField].
+  final ContextMenuBuilder? contextMenuBuilder;
 
   static String? _defaultHintGetter(
     BuildContext context,
@@ -1102,6 +1106,7 @@ class StreamMessageInputState extends State<StreamMessageInput>
                   autocorrect: widget.autoCorrect,
                   contentInsertionConfiguration:
                       widget.contentInsertionConfiguration,
+                  contextMenuBuilder: widget.contextMenuBuilder,
                 ),
               ),
             ),
